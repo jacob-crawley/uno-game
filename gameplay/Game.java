@@ -1,15 +1,22 @@
 package uno.gameplay;
+import uno.gui.GameplayPanel;
+import uno.gui.WildcardFrame;
+import javax.swing.*;
 import java.util.*;
 
 public class Game{
     private List<Player> players;
-    private Deck deck;
+    public Deck deck;
     private int orderOfPlay;
     private List<Card> cardsPlayed;
     private int turn;
     private boolean gameWon;
-    public Card topOfDeck;
+    private Card topOfDeck;
     private CardColour currentColour;
+    private Card userSelection;
+    private final List<String> SPECIAL_CARDS = new ArrayList<String>(List.of("+2","skip","reverse","wild","wild +4"));
+
+
 
     public Game(String name, int opps) {
         this.players = new ArrayList<Player>();
@@ -26,32 +33,67 @@ public class Game{
             players.add(new Player(oppName,PlayerType.OPPONENT));
         }
         this.Deal(deck,players);
-        topOfDeck = deck.pop();
+        boolean validTopCard = false;
+        while (!validTopCard){
+            Card topCard =  deck.pop();
+            if (!topCard.getValue().equals("wild")||!topCard.getValue().equals("wild +4")){
+                topOfDeck = topCard;
+                validTopCard = true;
+            }
+        }
+
         cardsPlayed.add(topOfDeck);
         currentColour = topOfDeck.getColour();
         gameWon = false;
+        userSelection = null;
     }
 
-    public void playGame(){
-        while (!gameWon){
-            Player p = players.get(turn);
-            if (p.getPlayerType().equals(PlayerType.USER)){
-                // user turn
-            } else {
-                opponentTurn(p);
-            }
-        }
-    }
 
-    public void opponentTurn(Player p){
+
+    public List<Card> getValidCards(List<Card> hand){
         List<Card> validCards =  new ArrayList<Card>();
         Card topCard = topOfDeck;
-        for (Card c: p.hand){
-            if (c.getColour().equals(currentColour) || c.getValue() == topCard.getValue() ||
-                    c.getValue().substring(0, 5).equals("wild")) {
+        for (Card c: hand){
+            if (c.getColour().equals(currentColour) || c.getValue().equals(topCard.getValue()) ||
+                    c.getValue().equals("wild")||c.getValue().equals("wild +4")) {
                 validCards.add(c);
             }
         }
+        return validCards;
+    }
+
+    public boolean isValidCard(Card c){
+        if (c.getColour().equals(currentColour) || c.getValue().equals(topOfDeck.getValue()) ||
+                c.getValue().equals("wild")||c.getValue().equals("wild +4")) {
+            return true;
+        }
+        return false;
+    }
+
+    public void playCard(Player currentPlayer, GameplayPanel panel){
+        List<Card> validCards = getValidCards(currentPlayer.hand);
+
+        if (validCards.contains(this.userSelection)){
+            cardsPlayed.add(userSelection);
+            topOfDeck = userSelection;
+            currentColour = topOfDeck.getColour();
+            currentPlayer.hand.remove(currentPlayer.hand.indexOf(userSelection));
+            userSelection = null;
+            if (currentPlayer.hand.isEmpty()){
+                gameWon = true;
+            } else {
+                if (SPECIAL_CARDS.contains(topOfDeck.getValue())){
+                    specialCardActions(topOfDeck,currentPlayer,panel);
+                } else{
+                    nextTurn();
+                }
+            }
+        }
+    }
+
+    public void opponentTurn(Player p,GameplayPanel panel){
+        Player currentPlayer = this.getCurrentPlayer();
+        List<Card> validCards = getValidCards(p.hand);
 
         if (validCards.isEmpty()){
             p.hand.add(deck.pop());
@@ -68,37 +110,42 @@ public class Game{
         if (p.hand.isEmpty()){
             gameWon = true;
         } else{
-            List<String> specialCards = new ArrayList<String>(List.of("+2","skip","reverse","wild","wild +4"));
-            if (specialCards.contains(topOfDeck.getValue())){
-                switch(topOfDeck.getValue()){
-                    case "+2":
-                        plusTwo();
-                        break;
-                    case "skip":
-                        skip();
-                        break;
-                    case "reverse":
-                        //reverse();
-                        break;
-                    case "wild":
-                        wild(p);
-                        break;
-                    case "wild +4":
-                        wild(p);
-                        plusTwo();
-                        plusTwo();
-                }
+            if (SPECIAL_CARDS.contains(topOfDeck.getValue())){
+                specialCardActions(topOfDeck,currentPlayer,panel);
             } else{
                 nextTurn();
             }
         }
     }
 
-    /**
-     * Increment turn by OrderOfPlay
-     */
-    private void nextTurn() {
+    private void specialCardActions(Card card,Player currentPlayer,GameplayPanel panel){
+        switch(card.getValue()){
+            case "+2":
+                plusCards(2);
+                break;
+            case "skip":
+                skip();
+                break;
+            case "reverse":
+                reverse();
+                nextTurn();
+                break;
+            case "wild":
+                wild(currentPlayer,panel);
+                nextTurn();
+                break;
+            case "wild +4":
+                wild(currentPlayer,panel);
+                plusCards(4);
+
+        }
+    }
+
+    public void nextTurn() {
         turn  = (turn +orderOfPlay) % (players.size());
+        if (turn == -1){
+            turn = players.size() -1;
+        }
     }
 
     // special card actions
@@ -107,12 +154,13 @@ public class Game{
         nextTurn();
     }
 
-    public void plusTwo(){
+    public void plusCards(int numCards){
         // give adjacent player 2 cards and skip turn
         nextTurn();
         Player p = players.get(turn);
-        p.hand.add(deck.pop());
-        p.hand.add(deck.pop());
+        for (int i=0; i<numCards; i++){
+            p.hand.add(deck.pop());
+        }
         nextTurn();
     }
 
@@ -120,8 +168,9 @@ public class Game{
         orderOfPlay = -(orderOfPlay);
     }
 
-    public void wild(Player p){
+    public void wild(Player p,GameplayPanel panel){
         CardColour[] colours = CardColour.colours;
+        // create new array of colours without black
         CardColour[] colourChoices = new CardColour[colours.length-1];
         System.arraycopy(colours,0,colourChoices,0,colourChoices.length);
 
@@ -129,6 +178,9 @@ public class Game{
             Random r = new Random();
             int choice = r.nextInt(colourChoices.length);
             currentColour = colourChoices[choice];
+        } else {
+           WildcardFrame colourMenu = new WildcardFrame(this,colourChoices);
+           panel.refreshPanels();
         }
     }
 
@@ -161,7 +213,41 @@ public class Game{
         return cardsPlayed;
     }
 
+    public int getTurn() {
+        return turn;
+    }
+
+    public boolean isGameWon() {
+        return gameWon;
+    }
+
+    public Card getTopOfDeck() {
+        return topOfDeck;
+    }
+
+    public CardColour getCurrentColour() {
+        return currentColour;
+    }
+
+    public void setCurrentColour(String colour){
+        currentColour = CardColour.fromString(colour);
+    }
+
+    public Card getUserSelection() {
+        return userSelection;
+    }
+
+    public void setUserSelection(Card userSelection) {
+        this.userSelection = userSelection;
+    }
+
+    public Player getCurrentPlayer(){
+        return this.players.get(turn);
+    }
+
     public static void main(String[] args) {
         Game g = new Game("gary",3);
+
+
     }
 }

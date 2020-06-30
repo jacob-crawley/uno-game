@@ -48,7 +48,7 @@ public class Deck {
         if (this.cards.isEmpty()){
             return null;
         }
-        return this.cards.remove(0);
+        return this.cards.remove(cards.size()-1);
     }
 
     public static void main(String[] args) {

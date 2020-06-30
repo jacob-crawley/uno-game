@@ -1,6 +1,9 @@
 package uno.gui;
+import org.w3c.dom.css.Rect;
 import uno.gameplay.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +15,7 @@ public class PlayerPanel extends JPanel{
     public int panelHeight;
     public int panelWidth;
     private Game game;
+    private Rectangle selectedRect;
 
     public PlayerPanel(Game game) {
         setPreferredSize(new Dimension(800, 188));
@@ -20,6 +24,24 @@ public class PlayerPanel extends JPanel{
         this.panelWidth = 800;
         this.hand = game.getPlayers().get(0).hand;
         this.cardMap = new HashMap<>();
+
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (Card card : cardMap.keySet()) {
+                    Rectangle rect = cardMap.get(card);
+                    if (rect.contains(e.getPoint())) {
+                        if (game.getTurn() == 0){
+                            game.setUserSelection(card);
+                        }
+                        System.out.println(game.getUserSelection());
+                        repaint();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     protected void paintComponent(Graphics g) {
@@ -57,4 +79,5 @@ public class PlayerPanel extends JPanel{
             xPos += xGap;
         }
     }
+
 }

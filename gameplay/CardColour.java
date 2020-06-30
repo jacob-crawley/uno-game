@@ -1,5 +1,5 @@
 package uno.gameplay;
-enum CardColour{
+public enum CardColour{
     RED("RED"),
     GREEN("GREEN"),
     BLUE("BLUE"),

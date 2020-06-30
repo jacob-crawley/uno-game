@@ -2,16 +2,21 @@ package uno.gui;
 import uno.gameplay.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.util.List;
 import javax.swing.*;
 
 public class TopPlayer extends JPanel{
     private int panelHeight;
     private int panelWidth;
     private String name;
+    private Game game;
+    private Player player;
 
-    public TopPlayer(String name) {
+    public TopPlayer(Game game,Player player) {
         setPreferredSize(new Dimension(800, 188));
-        this.name = name;
+        this.game = game;
+        this.player = player;
+        this.name = player.getName();
         this.panelHeight = 188;
         this.panelWidth = 800;
     }
@@ -32,6 +37,7 @@ public class TopPlayer extends JPanel{
         g2.fill(bodyCurve);
         g2.fill(body);
         g2.drawString(this.name,xPos-10,125);
+        GamePanel.writeNumberOfCards(g2,xPos-10,150,player.hand.size());
 
     }
 }

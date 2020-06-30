@@ -77,7 +77,7 @@ public class StartPanel extends JPanel{
                     new GameFrame(name, Integer.parseInt(noOfOpps));
                     parentFrame.dispose();
                 } catch (NullPointerException e) {
-                    JLabel errorLabel = new JLabel("Please enter select no. of opponents");
+                    JLabel errorLabel = new JLabel("Please select no. of opponents");
                     errorLabel.setForeground(Color.RED);
                     centrePanel.add(errorLabel);
                 }
