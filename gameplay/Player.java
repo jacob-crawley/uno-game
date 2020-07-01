@@ -1,6 +1,11 @@
 package uno.gameplay;
 import java.util.*;
 
+/**
+ * @author jacob crawley
+ * Contains all details of an individual player
+ */
+
 public class Player{
     private String name;
     public List<Card> hand;

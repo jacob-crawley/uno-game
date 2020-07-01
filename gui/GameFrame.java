@@ -4,6 +4,11 @@ import uno.gameplay.Game;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * JFrame where the game is played
+ */
+
 public class GameFrame extends JFrame {
     private Game game;
     public GamePanel gamePanel;
@@ -18,11 +23,4 @@ public class GameFrame extends JFrame {
         this.game = new Game(name,players);
         this.gamePanel = new GamePanel(contentPane,players,game,this);
     }
-
-    public static void main(String[] args) {
-        JFrame f = new GameFrame("x",3);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true);
-    }
-
 }

@@ -5,6 +5,11 @@ import java.awt.geom.Ellipse2D;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * Draws opponent int east/west panel
+ */
+
 public class SidePlayer extends JPanel{
     private int panelHeight;
     private int panelWidth;

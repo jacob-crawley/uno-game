@@ -1,4 +1,9 @@
 package uno.gameplay;
+
+/**
+ * @author jacobcrawley
+ * Enum for colour of a card object
+ */
 public enum CardColour{
     RED("RED"),
     GREEN("GREEN"),
@@ -17,6 +22,7 @@ public enum CardColour{
             RED, GREEN, BLUE, YELLOW, BLACK
     };
 
+    // Create a CardColour value from a string
     public static CardColour fromString(String value){
         for (CardColour c: CardColour.values()){
             if (c.getColour().equals(value.toUpperCase())){

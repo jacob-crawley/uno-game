@@ -2,8 +2,12 @@ package uno.gui;
 import uno.gameplay.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.List;
 import javax.swing.*;
+
+/**
+ * @author jacobcrawley
+ * Draws opponet for panel in north position
+ */
 
 public class TopPlayer extends JPanel{
     private int panelHeight;

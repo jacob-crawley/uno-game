@@ -1,4 +1,9 @@
 package uno.gameplay;
+
+/**
+ * @author jacobcrawley
+ * Class for an individual card
+ */
 public class Card{
     private CardColour colour;
     private String value;

@@ -2,7 +2,15 @@ package uno.gui;
 import uno.gameplay.Card;
 import java.awt.*;
 
+/**
+ * @author jacob crawley
+ * methods for drawing details of uno cardsd
+ */
+
 public class DrawCard{
+    /**
+     * draws card value in rectangle
+     */
     public static void drawCardDetails(Graphics2D g2, Card card, Rectangle r){
         if (card.getColourString().equals("YELLOW")){
             g2.setColor(Color.BLACK);
@@ -15,6 +23,9 @@ public class DrawCard{
         g2.drawString(value,r.x+2,r.y+25);
     }
 
+    /**
+     * Get Color object to fill card with, based on its CardColour
+     */
     public static Color getPaintColour(Card c){
         String cardColour = c.getColourString();
         Color paintColour = null;

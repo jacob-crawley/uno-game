@@ -32,18 +32,22 @@ public class Deck {
                 this.cards.add(new Card(c, "+2"));
             }
         }
-        Deck.Shuffle(this.cards);
+        Deck.shuffle(this.cards);
     }
 
     /**
      * Randomly reorders cards
      * @param cards list of cards
      */
-    public static List<Card> Shuffle(List<Card> cards){
+    public static List<Card> shuffle(List<Card> cards){
         Collections.shuffle(cards);
         return cards;
     }
 
+    /**
+     * Return cards at the end of the 'cards' list and remove it
+     * @return card a the end of the array
+     */
     public Card pop(){
         if (this.cards.isEmpty()){
             return null;
@@ -51,12 +55,16 @@ public class Deck {
         return this.cards.remove(cards.size()-1);
     }
 
-    public static void main(String[] args) {
-        Deck d = new Deck();
-        Deck.Shuffle(d.cards);
-        for (Card c: d.cards){
-            System.out.println(c);
-        }
-
+    // Add card to the deck
+    public void addCard(Card c){
+        this.cards.add(c);
     }
+
+    public boolean isEmpty(){
+        if (this.cards.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
 }

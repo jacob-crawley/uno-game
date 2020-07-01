@@ -2,6 +2,11 @@ package uno.gui;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * JFrame for start page
+ */
+
 public class StartFrame extends JFrame {
     public StartFrame() {
         setTitle("UNO");
@@ -9,11 +14,4 @@ public class StartFrame extends JFrame {
         Container contentPane = this.getContentPane();
         StartPanel p = new StartPanel(contentPane,this);
     }
-
-    public static void main(String[] args) {
-        JFrame f = new StartFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true);
-    }
-
 }

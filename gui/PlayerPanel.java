@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * Panel at the bottom of game screen containing users hand
+ */
 public class PlayerPanel extends JPanel{
     public List<Card> hand;
     public Map<Card, Rectangle> cardMap;
@@ -26,6 +30,9 @@ public class PlayerPanel extends JPanel{
         this.cardMap = new HashMap<>();
 
 
+        /* sets selectedRect to clicked on card
+           if mouse click in rectangle
+         */
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -34,8 +41,8 @@ public class PlayerPanel extends JPanel{
                     if (rect.contains(e.getPoint())) {
                         if (game.getTurn() == 0){
                             game.setUserSelection(card);
+                            selectedRect = rect;
                         }
-                        System.out.println(game.getUserSelection());
                         repaint();
                         break;
                     }
@@ -48,20 +55,38 @@ public class PlayerPanel extends JPanel{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         this.getRectangles();
+        Stroke defaultStroke = g2.getStroke();
         for (Card card: cardMap.keySet()){
             Rectangle r = this.cardMap.get(card);
             if (r != null){
                 Color paintColour = DrawCard.getPaintColour(card);
                 g2.setColor(paintColour);
                 g2.fill(r);
-                g2.setColor(Color.BLACK);
-                g2.draw(r);
+
+                g2.setStroke(defaultStroke);
+                if (r.equals(selectedRect)){
+                    g2.setStroke(new BasicStroke(4));
+                    if (game.isValidCard(card)){
+                        g2.setColor(Color.CYAN); // colour for valid selected card
+                    } else {
+                        g2.setColor(Color.magenta); // colour for invalid selected card
+                    }
+                    g2.draw(r);
+                } else {
+                    g2.setStroke(defaultStroke);
+                    g2.setColor(Color.BLACK);
+                    g2.draw(r);
+                }
                 DrawCard.drawCardDetails(g2,card, r);
             }
+
         }
     }
 
-    protected void getRectangles(){
+    /**
+     * creates rectangle objects for each card in users hand
+     */
+    public void getRectangles(){
         cardMap.clear();
         int cardHeight = (panelHeight - 20) / 2;
         int cardWidth = (int)(cardHeight *0.75);
@@ -78,6 +103,10 @@ public class PlayerPanel extends JPanel{
             this.cardMap.put(c,r);
             xPos += xGap;
         }
+    }
+
+    public void resetCardSelection(){
+        this.selectedRect = null;
     }
 
 }

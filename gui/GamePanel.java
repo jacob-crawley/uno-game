@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * Contains each section of the game
+ */
+
 public class GamePanel extends JPanel{
-    protected JPanel playerPanel;
+    protected PlayerPanel playerPanel;
     protected JPanel gameplayPanel;
     protected JPanel leftOppPanel;
     protected JPanel rightOppPanel;
@@ -20,6 +25,8 @@ public class GamePanel extends JPanel{
         this.playerPanel  = new PlayerPanel(game);
         this.game = game;
         List<JPanel> oppPanels = new ArrayList<JPanel>();
+
+        // set left, right and top panels based on selected no. of opponents
         switch (opponents){
             case 3:
                 this.leftOppPanel = new SidePlayer(this.game,this.game.getPlayers().get(1));
@@ -59,6 +66,7 @@ public class GamePanel extends JPanel{
         c.add(this.gameplayPanel,BorderLayout.CENTER);
     }
 
+    // Writes the number of cards in each opponents hand at specified coordinates
     public static void writeNumberOfCards(Graphics2D g2, int x, int y,int value){
         g2.setColor(Color.BLACK);
         g2.drawString("Cards: "+value,x,y);

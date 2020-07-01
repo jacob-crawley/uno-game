@@ -2,6 +2,10 @@ package uno;
 import uno.gui.StartFrame;
 import javax.swing.*;
 
+/**
+ * @author jacobcrawley
+ * runs the full uno game by calling a new StartFrame
+ */
 public class RunUno{
     public RunUno(){
         JFrame f = new StartFrame();

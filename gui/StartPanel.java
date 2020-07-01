@@ -2,6 +2,11 @@ package uno.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+/**
+ * @author jacobcrawley
+ * Displays the start page
+ */
 public class StartPanel extends JPanel{
     protected JPanel titlePanel;
     protected JPanel centrePanel;

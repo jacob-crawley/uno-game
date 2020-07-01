@@ -10,18 +10,24 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * @author jacob crawley
+ * JPanel in the centre of the GameFrame containing
+ * the deck and action buttons
+ */
+
 public class GameplayPanel extends JPanel{
     private Game game;
     public int panelHeight;
     public int panelWidth;
     public JButton pickupButton;
     public JButton playButton;
-    public JButton nextButton;
-    private JPanel playerPanel;
+    public JButton restartButton;
+    private PlayerPanel playerPanel;
     private JFrame parentFrame;
     private List<JPanel> oppPanels;
 
-    public GameplayPanel(Game game, JPanel playerPanel, JFrame parentFrame,List<JPanel> oppPanels) {
+    public GameplayPanel(Game game, PlayerPanel playerPanel, JFrame parentFrame,List<JPanel> oppPanels) {
         setPreferredSize(new Dimension(400, 374));
         this.parentFrame = parentFrame;
         this.game = game;
@@ -40,6 +46,7 @@ public class GameplayPanel extends JPanel{
         addListeners();
     }
 
+    // add action listeners to the action buttons
     public void addListeners(){
         GameplayPanel thisPanel = this;
         this.playButton.addActionListener(new ActionListener() {
@@ -47,17 +54,22 @@ public class GameplayPanel extends JPanel{
                 Player currentPlayer = game.getCurrentPlayer();
                 if (currentPlayer.getPlayerType().equals(PlayerType.USER)) {
                     game.playCard(currentPlayer,thisPanel);
+
                 } else {
                     game.opponentTurn(currentPlayer,thisPanel);
+                    refreshPanels();
 
                 }
-                refreshPanels();
+
             }
         });
         this.pickupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 Player currentPlayer = game.getCurrentPlayer();
                 if (currentPlayer.getPlayerType().equals(PlayerType.USER)) {
+                    if (game.deck.isEmpty()){
+                        game.reshuffleDeck();
+                    }
                     currentPlayer.hand.add(game.deck.pop());
                     game.nextTurn();
                     refreshPanels();
@@ -66,9 +78,12 @@ public class GameplayPanel extends JPanel{
         });
     }
 
-
+    /**
+     * repaints all the panels in the frame
+      */
     public void refreshPanels(){
         this.repaint();
+        this.playerPanel.resetCardSelection();
         this.playerPanel.repaint();
         for (JPanel p: oppPanels){
             p.repaint();
@@ -88,14 +103,25 @@ public class GameplayPanel extends JPanel{
         } else {
             addTurnText(g2, cardHeight, cardWidth);
             addColourText(g2, cardHeight, cardWidth);
+            List<Player> players = game.getPlayers();
+            int onUno = 0;
+            for (Player p: players){
+                if (p.hand.size() == 1){
+                    addUnoText(g2,(onUno+cardHeight),cardWidth,p.getName());
+                    onUno += 25;
+                }
+            }
         }
     }
 
+    /**
+     * When game is won, remove buttons and add new one to start a new game
+     */
     private void addRestartButton(){
         this.remove(playButton);
         this.remove(pickupButton);
 
-        JButton restartButton = new JButton("Play Again");
+        restartButton = new JButton("Play Again");
         this.add(restartButton);
         restartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -105,6 +131,8 @@ public class GameplayPanel extends JPanel{
         } );
 
     }
+
+    // Add text to display name of the winner
     private void addWinnerText(Graphics2D g2, int cardHeight,int cardWidth){
         Player currentPlayer = game.getCurrentPlayer();
         g2.setColor(Color.BLACK);
@@ -112,16 +140,26 @@ public class GameplayPanel extends JPanel{
                 (panelHeight / 2) - (cardWidth /2) - 20,cardHeight+50);
     }
 
+    // Show user who has current turn
     private void addTurnText(Graphics2D g2, int cardHeight,int cardWidth){
         Player currentPlayer = game.getCurrentPlayer();
         String turnText = currentPlayer.getName()+"'s turn";
         g2.setColor(Color.BLACK);
         g2.drawString(turnText,(panelHeight / 2) - (cardWidth /2) - 20,cardHeight+50);
     }
+
+    // Displays current colour
     private void addColourText(Graphics2D g2, int cardHeight,int cardWidth){
         g2.setColor(Color.BLACK);
         g2.drawString("Current Colour: "+game.getCurrentColour().toString(),
                 (panelHeight / 2) - (cardWidth /2) - 20,cardHeight+75);
+    }
+
+    // Displays message when a player only has one card left
+    private void addUnoText(Graphics2D g2, int cardHeight,int cardWidth,String name) {
+        g2.setColor(Color.BLACK);
+        g2.drawString(name + " is on UNO!",
+                (panelHeight / 2) - (cardWidth / 2) - 20, cardHeight + 100);
     }
 
 
