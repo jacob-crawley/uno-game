@@ -38,9 +38,11 @@ public class Game{
         boolean validTopCard = false;
         while (!validTopCard){
             Card topCard =  deck.pop();
-            if (!topCard.getValue().equals("wild")||!topCard.getValue().equals("wild +4")){
+            if (!topCard.getValue().equals("wild") && !topCard.getValue().equals("wild +4")){
                 topOfDeck = topCard;
                 validTopCard = true;
+            } else {
+                deck.addCard(topCard); // put card back on bottom of deck
             }
         }
 
@@ -79,7 +81,7 @@ public class Game{
             cardsPlayed.add(userSelection);
             topOfDeck = userSelection;
             currentColour = topOfDeck.getColour();
-            currentPlayer.hand.remove(currentPlayer.hand.indexOf(userSelection));
+            currentPlayer.hand.remove(userSelection);
             userSelection = null;
             if (currentPlayer.hand.isEmpty()){
                 gameWon = true;
@@ -211,14 +213,18 @@ public class Game{
     }
 
     /**
-     * Used when deck runs out - shuffle cardsPlayed
-     * and move to deck so game can continue
+     * Used when deck runs out - shuffle cards from cardsPlayed
+     * (apart from topOfDeck) and move to deck
      */
     public void reshuffleDeck(){
-        Deck.shuffle(cardsPlayed);
-        for (int i=0; i < cardsPlayed.size(); i++){
-            deck.addCard(cardsPlayed.get(i));
+        List<Card> newDeck = new ArrayList<>();
+        for (int i=0; i < cardsPlayed.size()-1; i++){
+            newDeck.add(cardsPlayed.get(i));
             cardsPlayed.remove(i);
+        }
+        Deck.shuffle(newDeck);
+        for (Card c: newDeck){
+            deck.addCard(c);
         }
     }
 
