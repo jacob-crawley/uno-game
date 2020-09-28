@@ -135,6 +135,7 @@ public class GameplayPanel extends JPanel{
 
     // Add text to display name of the winner
     private void addWinnerText(Graphics2D g2, int cardHeight,int cardWidth){
+        System.out.println("Called!!!!!!");
         Player currentPlayer = game.getCurrentPlayer();
         g2.setColor(Color.BLACK);
         g2.drawString(currentPlayer.getName() + " wins!",

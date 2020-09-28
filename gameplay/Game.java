@@ -85,6 +85,7 @@ public class Game{
             userSelection = null;
             if (currentPlayer.hand.isEmpty()){
                 gameWon = true;
+                panel.refreshPanels();
             } else {
                 if (SPECIAL_CARDS.contains(topOfDeck.getValue())){
                     specialCardActions(topOfDeck,currentPlayer,panel);
@@ -101,6 +102,11 @@ public class Game{
         Player currentPlayer = this.getCurrentPlayer();
         List<Card> validCards = getValidCards(p.hand);
 
+        /*
+            If hand of valid cards is empty pick up,
+            otherwise select random card from hand of
+            cards that can be played
+         */
         if (validCards.isEmpty()){
             p.hand.add(deck.pop());
         } else {
@@ -119,6 +125,7 @@ public class Game{
                 specialCardActions(topOfDeck,currentPlayer,panel);
             } else{
                 nextTurn();
+                panel.refreshPanels();
             }
         }
     }
@@ -218,13 +225,13 @@ public class Game{
      */
     public void reshuffleDeck(){
         List<Card> newDeck = new ArrayList<>();
-        for (int i=0; i < cardsPlayed.size()-1; i++){
-            newDeck.add(cardsPlayed.get(i));
-            cardsPlayed.remove(i);
+        for (int i=0; i < this.cardsPlayed.size()-1; i++){
+            newDeck.add(this.cardsPlayed.get(i));
+            this.cardsPlayed.remove(i);
         }
         Deck.shuffle(newDeck);
         for (Card c: newDeck){
-            deck.addCard(c);
+            this.deck.addCard(c);
         }
     }
 
