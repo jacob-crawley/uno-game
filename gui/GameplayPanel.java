@@ -1,4 +1,5 @@
 package uno.gui;
+import uno.RunUno;
 import uno.gameplay.Card;
 import uno.gameplay.Game;
 import uno.gameplay.Player;
@@ -39,10 +40,13 @@ public class GameplayPanel extends JPanel{
 
         this.playButton = new JButton("Play Card");
         this.pickupButton = new JButton("Pick up");
+        this.restartButton = new JButton("Play Again");
 
         this.add(playButton);
         this.add(pickupButton);
+        this.add(restartButton);
 
+        restartButton.setVisible(false);
         addListeners();
     }
 
@@ -67,15 +71,18 @@ public class GameplayPanel extends JPanel{
             public void actionPerformed(ActionEvent event) {
                 Player currentPlayer = game.getCurrentPlayer();
                 if (currentPlayer.getPlayerType().equals(PlayerType.USER)) {
-                    if (game.deck.isEmpty()){
-                        game.reshuffleDeck();
-                    }
                     currentPlayer.hand.add(game.deck.pop());
                     game.nextTurn();
                     refreshPanels();
                 }
             }
         });
+        this.restartButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                RunUno newGame = new RunUno();
+                parentFrame.dispose();
+            }
+        } );
     }
 
     /**
@@ -85,6 +92,9 @@ public class GameplayPanel extends JPanel{
         this.repaint();
         this.playerPanel.resetCardSelection();
         this.playerPanel.repaint();
+        if (game.deck.isEmpty()){
+            game.reshuffleDeck();
+        }
         for (JPanel p: oppPanels){
             p.repaint();
         }
@@ -118,18 +128,9 @@ public class GameplayPanel extends JPanel{
      * When game is won, remove buttons and add new one to start a new game
      */
     private void addRestartButton(){
-        this.remove(playButton);
-        this.remove(pickupButton);
-
-        restartButton = new JButton("Play Again");
-        this.add(restartButton);
-        restartButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                new StartFrame();
-                parentFrame.dispose();
-            }
-        } );
-
+        playButton.setVisible(false);
+        pickupButton.setVisible(false);
+        restartButton.setVisible(true);
     }
 
     // Add text to display name of the winner

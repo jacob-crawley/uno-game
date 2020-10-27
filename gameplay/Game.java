@@ -38,9 +38,11 @@ public class Game{
         boolean validTopCard = false;
         while (!validTopCard){
             Card topCard =  deck.pop();
-            if (!topCard.getValue().equals("wild")||!topCard.getValue().equals("wild +4")){
+            if (!topCard.getValue().equals("wild") && !topCard.getValue().equals("wild +4")){
                 topOfDeck = topCard;
                 validTopCard = true;
+            } else {
+                deck.addCard(topCard); // put card back on bottom of deck
             }
         }
 
@@ -79,10 +81,11 @@ public class Game{
             cardsPlayed.add(userSelection);
             topOfDeck = userSelection;
             currentColour = topOfDeck.getColour();
-            currentPlayer.hand.remove(currentPlayer.hand.indexOf(userSelection));
+            currentPlayer.hand.remove(userSelection);
             userSelection = null;
             if (currentPlayer.hand.isEmpty()){
                 gameWon = true;
+                panel.refreshPanels();
             } else {
                 if (SPECIAL_CARDS.contains(topOfDeck.getValue())){
                     specialCardActions(topOfDeck,currentPlayer,panel);
@@ -99,8 +102,14 @@ public class Game{
         Player currentPlayer = this.getCurrentPlayer();
         List<Card> validCards = getValidCards(p.hand);
 
+        /*
+            If hand of valid cards is empty pick up,
+            otherwise select random card from hand of
+            cards that can be played
+         */
         if (validCards.isEmpty()){
             p.hand.add(deck.pop());
+
         } else {
             Random r = new Random();
             int cardChoice = r.nextInt(validCards.size());
@@ -117,6 +126,7 @@ public class Game{
                 specialCardActions(topOfDeck,currentPlayer,panel);
             } else{
                 nextTurn();
+                panel.refreshPanels();
             }
         }
     }
@@ -164,7 +174,7 @@ public class Game{
         nextTurn();
     }
 
-    // assign specifed number of cards to the next player
+    // assign specified number of cards to the next player
     public void plusCards(int numCards){
         // give adjacent player 2 cards and skip turn
         nextTurn();
@@ -211,19 +221,29 @@ public class Game{
     }
 
     /**
-     * Used when deck runs out - shuffle cardsPlayed
-     * and move to deck so game can continue
+     * Used when deck runs out - shuffle cards from cardsPlayed
+     * (apart from topOfDeck) and move to deck
      */
     public void reshuffleDeck(){
-        Deck.shuffle(cardsPlayed);
-        for (int i=0; i < cardsPlayed.size(); i++){
-            deck.addCard(cardsPlayed.get(i));
-            cardsPlayed.remove(i);
+        List<Card> newDeck = new ArrayList<>();
+        for (Card c: this.cardsPlayed){
+            newDeck.add(c);
+        }
+        this.cardsPlayed = new ArrayList<Card>();
+        cardsPlayed.add(this.topOfDeck);
+
+        Deck.shuffle(newDeck);
+        for (Card c: newDeck){
+            this.deck.addCard(c);
         }
     }
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Deck getDeck(){
+        return this.deck;
     }
 
     public int getTurn() {
