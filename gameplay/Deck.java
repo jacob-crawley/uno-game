@@ -23,7 +23,7 @@ public class Deck {
             // add 2 cards for numbers 1-9 for each colour
             for (int x = 1; x <= 9; x++) {
                 this.cards.add(new Card(c, String.valueOf(x)));
-                //this.cards.add(new Card(c, String.valueOf(x)));
+                this.cards.add(new Card(c, String.valueOf(x)));
             }
             // add 2 skip and reverse cards
             for (int y = 0; y < 2; y++) {
