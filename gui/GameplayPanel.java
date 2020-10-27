@@ -71,9 +71,6 @@ public class GameplayPanel extends JPanel{
             public void actionPerformed(ActionEvent event) {
                 Player currentPlayer = game.getCurrentPlayer();
                 if (currentPlayer.getPlayerType().equals(PlayerType.USER)) {
-                    if (game.deck.isEmpty()){
-                        game.reshuffleDeck();
-                    }
                     currentPlayer.hand.add(game.deck.pop());
                     game.nextTurn();
                     refreshPanels();
@@ -95,6 +92,9 @@ public class GameplayPanel extends JPanel{
         this.repaint();
         this.playerPanel.resetCardSelection();
         this.playerPanel.repaint();
+        if (game.deck.isEmpty()){
+            game.reshuffleDeck();
+        }
         for (JPanel p: oppPanels){
             p.repaint();
         }
@@ -135,7 +135,6 @@ public class GameplayPanel extends JPanel{
 
     // Add text to display name of the winner
     private void addWinnerText(Graphics2D g2, int cardHeight,int cardWidth){
-        System.out.println("Called!!!!!!");
         Player currentPlayer = game.getCurrentPlayer();
         g2.setColor(Color.BLACK);
         g2.drawString(currentPlayer.getName() + " wins!",

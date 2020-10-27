@@ -109,6 +109,7 @@ public class Game{
          */
         if (validCards.isEmpty()){
             p.hand.add(deck.pop());
+
         } else {
             Random r = new Random();
             int cardChoice = r.nextInt(validCards.size());
@@ -173,7 +174,7 @@ public class Game{
         nextTurn();
     }
 
-    // assign specifed number of cards to the next player
+    // assign specified number of cards to the next player
     public void plusCards(int numCards){
         // give adjacent player 2 cards and skip turn
         nextTurn();
@@ -225,10 +226,12 @@ public class Game{
      */
     public void reshuffleDeck(){
         List<Card> newDeck = new ArrayList<>();
-        for (int i=0; i < this.cardsPlayed.size()-1; i++){
-            newDeck.add(this.cardsPlayed.get(i));
-            this.cardsPlayed.remove(i);
+        for (Card c: this.cardsPlayed){
+            newDeck.add(c);
         }
+        this.cardsPlayed = new ArrayList<Card>();
+        cardsPlayed.add(this.topOfDeck);
+
         Deck.shuffle(newDeck);
         for (Card c: newDeck){
             this.deck.addCard(c);
@@ -237,6 +240,10 @@ public class Game{
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Deck getDeck(){
+        return this.deck;
     }
 
     public int getTurn() {
